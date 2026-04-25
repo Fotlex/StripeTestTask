@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Купить {{ item.name }}{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+    <div class="card">
+        {% if request.GET.success %}
+            <div class="success-msg">Оплата прошла успешно</div>
+        {% endif %}
+
+        <nav style="text-align: center; margin-bottom: 20px;">
+            <a href="{% url 'item_list' %}" style="text-decoration: none; color: #6772e5; font-weight: bold;">На главную</a>
+        </nav>
+
+        <h1>{{ item.name }}</h1>
+        <p>{{ item.description }}</p>
+        <div class="price">{{ item.price }} {{ item.currency|upper }}</div>
+        
+        <button id="buy-button" 
+                data-item-id="{{ item.id }}" 
+                data-stripe-key="{{ stripe_public_key }}">
+            Купить
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/payment.js' %}"></script>
+{% endblock %}
