@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Список товаров{% endblock %}
+{% block title %}Список товаров и заказов{% endblock %}
 
 {% block content %}
     <h1>Наши товары</h1>
@@ -11,10 +11,61 @@
                 <h2>{{ item.name }}</h2>
                 <p>{{ item.description|truncatechars:50 }}</p>
                 <div class="price">{{ item.price }} {{ item.currency|upper }}</div>
-                <a href="{% url 'item_detail' item.id %}" class="btn-view">Подробнее</a>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                    <a href="{% url 'item_detail' item.id %}" class="btn-view">
+                        Купить (Stripe Checkout)
+                    </a>
+                    <a href="{% url 'item_intent_detail' item.id %}" class="btn-view" style="background-color: #28a745;">
+                        Купить (Intent)
+                    </a>
+                </div>
             </div>
         {% empty %}
             <p>Товаров пока нет.</p>
+        {% endfor %}
+    </div>
+
+    <hr style="margin: 50px auto; border: 0; border-top: 2px solid #ddd; width: 80%;">
+
+    <h1>Заказы</h1>
+
+    <div class="container">
+        {% for order in orders %}
+            <div class="item-card" style="width: 320px; height: auto;">
+                <h2>Заказ #{{ order.id }}</h2>
+                
+                <div style="text-align: left; margin: 15px 0; color: #555; font-size: 14px;">
+                    <strong>Состав:</strong>
+                    <ul style="padding-left: 20px; margin-top: 5px;">
+                        {% for item in order.items.all %}
+                            <li>{{ item.name }} - {{ item.price }} {{ item.currency|upper }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                {% if order.discount %}
+                    <p style="color: #e6a822; font-weight: bold; height: auto; margin: 5px 0;">
+                        Скидка: {{ order.discount.name }} (-{{ order.discount.percent_off }}%)
+                    </p>
+                {% endif %}
+                
+                {% if order.tax %}
+                    <p style="color: #e0245e; font-weight: bold; height: auto; margin: 5px 0;">
+                        Налог: {{ order.tax.name }} (+{{ order.tax.percentage }}%)
+                    </p>
+                {% endif %}
+
+                <div class="price">{{ order.total_price }} {{ order.get_currency|upper }}</div>
+                
+                <a href="{% url 'order_detail' order.id %}" class="btn-view" style="background-color: #ff9800; width: 100%; box-sizing: border-box;">
+                    Перейти к оплате заказа
+                </a>
+            </div>
+        {% empty %}
+            <p style="text-align: center; color: #777;">
+                Заказов пока нет. Зайдите в админ-панель (<strong>/admin</strong>), создайте несколько товаров и объедините их в "Заказ".
+            </p>
         {% endfor %}
     </div>
 {% endblock %}

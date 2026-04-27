@@ -26,7 +26,7 @@ logs:
 
 .PHONY: down
 down:
-	@$(DOCKER_COMPOSE) down
+	@$(DOCKER_COMPOSE) down $(s)
 
 
 .PHONY: restart

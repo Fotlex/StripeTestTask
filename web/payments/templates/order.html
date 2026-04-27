@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Оплата заказа #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+    <div class="card">
+        <nav style="text-align: center; margin-bottom: 20px;">
+            <a href="{% url 'item_list' %}" style="text-decoration: none; color: #6772e5; font-weight: bold;">На главную</a>
+        </nav>
+
+        <h1>Заказ #{{ order.id }}</h1>
+        <ul style="text-align: left;">
+            {% for item in order.items.all %}
+                <li>{{ item.name }} - {{ item.price }} {{ item.currency|upper }}</li>
+            {% endfor %}
+        </ul>
+        
+        {% if order.discount %}
+            <p style="color: #ffae00ff; font-weight: bold;">Скидка: {{ order.discount.name }} (-{{ order.discount.percent_off }}%)</p>
+        {% endif %}
+        {% if order.tax %}
+            <p style="color: #ff0051ff; font-weight: bold;">Налог: {{ order.tax.name }} (+{{ order.tax.percentage }}%)</p>
+        {% endif %}
+
+        <div class="price">Сумма: {{ order.total_price }} {{ order.get_currency|upper }}</div>
+        
+        <button id="buy-order-button" 
+                data-order-id="{{ order.id }}" 
+                data-stripe-key="{{ stripe_public_key }}">
+            Оплатить заказ
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/order.js' %}"></script>
+{% endblock %}

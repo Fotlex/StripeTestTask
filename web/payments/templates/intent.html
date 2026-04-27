@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Оплата {{ item.name }}{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+    <div class="card">
+        <h1>{{ item.name }}</h1>
+        <div class="price">{{ item.price }} {{ item.currency|upper }}</div>
+        <p>Введите данные карты здесь:</p>
+
+        <form id="payment-form" data-item-id="{{ item.id }}" data-stripe-key="{{ stripe_public_key }}">
+            <div id="card-element" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+            </div>
+            <button id="submit-button">Оплатить</button>
+            <div id="payment-message" class="hidden" style="margin-top: 15px; color: red;"></div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/intent.js' %}"></script>
+{% endblock %}
